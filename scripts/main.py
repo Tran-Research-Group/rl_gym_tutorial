@@ -1,6 +1,9 @@
+import os
+
 import gymnasium as gym
 from stable_baselines3 import PPO
 import torch
+import imageio
 
 # Define configurations
 env_name: str = "CartPole-v1"
@@ -25,6 +28,44 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 # Create an environment (cartpole-v1)
-env = gym.make("CartPole-v1")
+env = gym.make(env_name, render_mode="rgb_array")
 
-model = PPO("MlpPolicy", env, verbose=1)
+# Create the model
+
+if os.path.exists(model_path):
+    model = PPO.load(model_path, env, verbose=1, device=device)
+else:
+    model = PPO(
+        "MlpPolicy",
+        env,
+        verbose=1,
+        device=device,
+        tensorboard_log=tensorboard_log_dir,
+        learning_rate=learning_rate,
+        n_steps=n_steps,
+        batch_size=batch_size,
+        n_epochs=n_epochs,
+        gamma=gamma,
+    )
+
+    # Train the model
+    model.learn(total_timesteps=total_timesteps, tb_log_name=env_name)
+
+    # Save the model
+    model.save(model_path)
+
+# Create an animation of the trained model
+images = []
+obs = env.reset()
+
+while True:
+    action, _ = model.predict(obs, deterministic=True)
+    obs, reward, terminated, truncated, _ = env.step(action)
+    img = env.render()
+    images.append(img)
+
+    if terminated or truncated:
+        break
+
+# Save the animation
+imageio.mimsave(animation_path, images, fps=30)
