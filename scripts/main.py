@@ -9,7 +9,7 @@ import imageio
 env_name: str = "CartPole-v1"
 
 # PPO hyperparameters
-total_timesteps: int = 10_000
+total_timesteps: int = 25_000
 learning_rate: float = 0.0003
 n_steps: int = 2048
 batch_size: int = 64
