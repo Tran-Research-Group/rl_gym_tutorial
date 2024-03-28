@@ -12,6 +12,7 @@ torch = "^2.2.2"
 stable-baselines3 = "^2.2.1"
 gymnasium = "^0.29.1"
 tensorboard = "^2.16.2"
+imageio = "^2.34.0"
 
 
 [build-system]
