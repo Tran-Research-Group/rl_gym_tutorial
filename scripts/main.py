@@ -19,7 +19,7 @@ gamma: float = 0.99
 # Paths to save the model, logs, and other files
 model_path: str = f"out/models/{env_name}_ppo"
 tensorboard_log_dir: str = f"out/log/"
-animation_path: str = f"out/animations/{env_name}_ppo"
+animation_path: str = f"out/animations/{env_name}_ppo.gif"
 
 
 # Check if the GPU is available
@@ -32,7 +32,7 @@ env = gym.make(env_name, render_mode="rgb_array")
 
 # Create the model
 
-if os.path.exists(model_path):
+if os.path.exists(model_path + ".zip"):
     model = PPO.load(model_path, env, verbose=1, device=device)
 else:
     model = PPO(
@@ -56,7 +56,7 @@ else:
 
 # Create an animation of the trained model
 images = []
-obs = env.reset()
+obs, _ = env.reset()
 
 while True:
     action, _ = model.predict(obs, deterministic=True)
